@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import axios from "axios";
+import axios, {toFormData} from "axios";
 import toast from "react-hot-toast";
 
 const BASE_URL = "http://localhost:3000"
@@ -9,6 +9,39 @@ export const useProductStore = create((set, get) => ({
   products: [],
   loading: false,
   error: null,
+  
+  // form state
+  formData: {
+    name: "",
+    price: "",
+    image: "",
+  },
+  
+  setFormData: (formData) => set({ formData }),
+  resetFormData: (formData) => set({ formData: {
+      name: "",
+      price: "",
+      image: "",
+    }
+  }),
+  
+  addProduct: async (e) => {
+    e.preventDefault();
+    set({ loading: true });
+    try {
+      const {formData} = get();
+      await axios.post(`${BASE_URL}/api/products`, formData);
+      await get().fetchProducts();
+      get().resetFormData();
+      toast.success("Product added successfully");
+      document.getElementById("add_product_modal").close();
+    } catch (err) {
+      console.log("Error while adding product:", err);
+      toast.error("Something went wring");
+    } finally {
+      set({ loading: false });
+    }
+  },
   
   fetchProducts: async () => {
     set({ loading: true });
