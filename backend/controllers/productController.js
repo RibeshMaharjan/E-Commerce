@@ -17,7 +17,6 @@ export const createProducts = async (req, res) => {
      RETURNING *;
     `;
 
-    console.log("New product added: ", newProduct);
     res.status(201).json({
       success: true,
       message: "New Product added successfully",
@@ -40,7 +39,6 @@ export const getProducts = async (req, res) => {
     ORDER BY created_at DESC;
     `;
 
-    console.log("Fetched products:", products);
     res.status(200).json({
       success: true,
       data: products,
