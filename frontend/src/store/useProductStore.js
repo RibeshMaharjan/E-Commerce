@@ -7,6 +7,7 @@ const BASE_URL = "http://localhost:3000"
 export const useProductStore = create((set, get) => ({
   // product state
   products: [],
+  currentProduct: null,
   loading: false,
   error: null,
   
@@ -24,6 +25,7 @@ export const useProductStore = create((set, get) => ({
       image: "",
     }
   }),
+  resetCurrentProduct: (currentProduct) => set({ currentProduct: null }),
   
   addProduct: async (e) => {
     e.preventDefault();
@@ -76,6 +78,47 @@ export const useProductStore = create((set, get) => ({
     } catch (err) {
       console.log("Error while deleting product:", err);
       toast.error("Something went wring")
+    } finally {
+      set({ loading: false });
+      await get().fetchProducts();
+    }
+  },
+  
+  fetchProduct: async (id) => {
+    set({ loading: true });
+    
+    try {
+      const response = await axios.get(`${BASE_URL}/api/products/${id}`);
+      
+      set({
+        currentProduct: response.data.data,
+        formData: response.data.data,
+        error: null,
+      });
+    } catch (err) {
+      console.log("Error while fetching single product:", err);
+      set({ error: "Something went wrong", currentProduct: null });
+      toast.error("Something went wrong");
+    } finally {
+      set({ loading: false });
+    }
+  },
+  
+  updateProduct: async (id) => {
+    set({ loading: true });
+    try {
+      const {formData} = get();
+      const response = await axios.put(`${BASE_URL}/api/products/${id}`, {...formData});
+      
+      set({
+        currentProduct: response.data.data,
+        error: null,
+      });
+      toast.success("Product updated successfully");
+    } catch (err) {
+      console.log("Error while updating product:", err);
+      set({ error: "Something went wrong", currentProduct: null });
+      toast.error("Something went wrong");
     } finally {
       set({ loading: false });
     }
