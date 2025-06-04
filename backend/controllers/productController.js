@@ -17,7 +17,6 @@ export const createProducts = async (req, res) => {
      RETURNING *;
     `;
 
-    console.log("New product added: ", newProduct);
     res.status(201).json({
       success: true,
       message: "New Product added successfully",
@@ -40,7 +39,6 @@ export const getProducts = async (req, res) => {
     ORDER BY created_at DESC;
     `;
 
-    console.log("Fetched products:", products);
     res.status(200).json({
       success: true,
       data: products,
@@ -64,7 +62,7 @@ export const getProduct = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: product,
+      data: product[0],
     })
   } catch (error) {
     console.log("Error while retrieving the product", error);
@@ -78,7 +76,6 @@ export const getProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, price, image } = req.body;
-  
   try {
     const updatedProduct = await sql `
       UPDATE products
