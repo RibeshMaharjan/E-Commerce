@@ -64,7 +64,7 @@ export const getProduct = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: product,
+      data: product[0],
     })
   } catch (error) {
     console.log("Error while retrieving the product", error);
@@ -78,7 +78,6 @@ export const getProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, price, image } = req.body;
-  
   try {
     const updatedProduct = await sql `
       UPDATE products
